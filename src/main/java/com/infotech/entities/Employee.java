@@ -1,10 +1,16 @@
 package com.infotech.entities;
 
 import com.infotech.model.Address;
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 @Entity
 @Table(name="employee_table")
@@ -22,29 +28,18 @@ public class Employee {
     @Column(name="email")
     private String email;
 
-    @Embedded
-    @AttributeOverrides (value = {
-            @AttributeOverride (column = @Column(name = "home_street_name", length = 50), name = "street"),
-            @AttributeOverride (column = @Column(name = "home_city_name"), name = "city"),
-            @AttributeOverride (column = @Column(name = "home_state_name"), name = "state"),
-            @AttributeOverride (column = @Column(name = "home_pin_code"), name = "pincode")
-    })
-    private Address homeAddress;
-
-    @Embedded
-    @AttributeOverrides (value = {
-            @AttributeOverride (column = @Column(name = "office_street_name", length = 60), name = "street"),
-            @AttributeOverride (column = @Column(name = "office_city_name"), name = "city"),
-            @AttributeOverride (column = @Column(name = "office_state_name"), name = "state"),
-            @AttributeOverride (column = @Column(name = "office_pin_code"), name = "pincode")
-    })
-    private Address officeAddress;
-
     @Column(name="date_of_joining")
     private Date doj;
 
     @Column(name="salary")
     private Double salary;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name="address_table",joinColumns=@JoinColumn(name="employee_id"))
+    @GenericGenerator(name = "sequence-gen", strategy = "sequence")
+    @CollectionId(columns = { @Column(name="address_id") }, generator = "sequence-gen", type = @Type(type = "int"))
+    private Collection<Address> addressList = new ArrayList<> ();
+
 
     public Integer getEmployeeId() {
         return employeeId;
@@ -86,20 +81,12 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Address getHomeAddress() {
-        return homeAddress;
+    public Collection<Address> getAddressList() {
+        return addressList;
     }
 
-    public void setHomeAddress(Address homeAddress) {
-        this.homeAddress = homeAddress;
-    }
-
-    public Address getOfficeAddress() {
-        return officeAddress;
-    }
-
-    public void setOfficeAddress(Address officeAddress) {
-        this.officeAddress = officeAddress;
+    public void setAddressList(Collection<Address> addressList) {
+        this.addressList = addressList;
     }
 
     @Override
@@ -108,8 +95,6 @@ public class Employee {
                 "employeeId=" + employeeId +
                 ", employeeName='" + employeeName + '\'' +
                 ", email='" + email + '\'' +
-                ", homeAddress=" + homeAddress +
-                ", officeAddress=" + officeAddress +
                 ", doj=" + doj +
                 ", salary=" + salary +
                 '}';

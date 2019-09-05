@@ -8,7 +8,7 @@ import org.hibernate.Session;
 
 import java.util.Date;
 
-public class ClientTest {
+public class SaveDataClientTest {
 
     public static void main(String[] args) {
         try( Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -34,20 +34,20 @@ public class ClientTest {
         employee.setSalary(50000.00);
         employee.setDoj(new Date());
 
-        Address homeAddress = new Address ();
-        homeAddress.setCity ("Chennai");
-        homeAddress.setPincode (90123L);
-        homeAddress.setState ("IL");
-        homeAddress.setStreet ("Park St.");
+        Address address1 = new Address ();
+        address1.setCity ("Chennai");
+        address1.setPincode (90123L);
+        address1.setState ("IL");
+        address1.setStreet ("Park St.");
 
-        Address officeAddress = new Address ();
-        officeAddress.setCity ("Puno");
-        officeAddress.setPincode (100123L);
-        officeAddress.setState ("MH");
-        officeAddress.setStreet ("XYZ Street");
+        Address address2 = new Address ();
+        address2.setCity ("Puno");
+        address2.setPincode (100123L);
+        address2.setState ("MH");
+        address2.setStreet ("XYZ Street");
 
-        employee.setHomeAddress (homeAddress);
-        employee.setOfficeAddress (officeAddress);
+        employee.getAddressList ().add (address1);
+        employee.getAddressList ().add (address2);
 
         return employee;
     }
